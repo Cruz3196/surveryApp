@@ -39,6 +39,7 @@ public class SurveyApp {
         };
 
         // Method to display questions
+        // when you "void" when you don't want to return anything. 
         public void askQuestions() {
             Scanner scanner = new Scanner(System.in);
             for (String question : questions) {
