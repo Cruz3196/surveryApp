@@ -3,7 +3,7 @@ class SurveyApp{
     public static void main(String[] arg){
         // variables for political score 
         int republican =0 ; 
-        int democrat - 0;
+        int democrat = 0;
         int greenParty = 0;
         int libertarian = 0;
 
