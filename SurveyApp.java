@@ -1,6 +1,5 @@
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner; 
+import java.io.*;
+import java.util.*;
 
 public class SurveyApp {
 
@@ -41,6 +40,15 @@ public class SurveyApp {
                 "D. The government should not intervene\n"
             };
 
+            Map<String, double[]> answerWeights = new HashMap<>(); 
+
+            public Survey(){
+                answerWeights.put("A", new double[]{0.2,1.0,0.7,0.1});
+                answerWeights.put("B", new double[]{1.0,0.2,0.1,0.6}); 
+                answerWeights.put("C", new double[]{0.3,.8,1.0,0.2}); 
+                answerWeights.put("D", new double[]{0.8,0.1,0.2,1.0}); 
+            }
+            
             // Method to display questions
             public void askQuestions(){
                 Scanner scanner = new Scanner(System.in);
@@ -48,7 +56,7 @@ public class SurveyApp {
 
                 for(int i = 0; i < questions.length; i++){
                     System.out.println(questions[i]);
-                    System.out.print("(A, B, C, D)");
+                    System.out.print("(A, B, C, D): ");
                 
 
                     String answer = scanner.nextLine().trim().toUpperCase(); 
@@ -58,43 +66,90 @@ public class SurveyApp {
                         answer = scanner.nextLine().trim().toUpperCase();
                         }
                         processAnswer(answer); // process the answer.
-                        userResponses.append(questions[0]).append("Answer: ").append(answer).append("\n");
+                        userResponses.append(questions[i]).append("Answer: ").append(answer).append("\n");
+
+                        // predict political prty mid-survery if confidence is high 
+                        String predictedParty = predictParty(); 
+                        if (predictedParty != null){
+                            System.err.println("\n: Based on your answers so far, your political alignment is likely: " + predictedParty + "\n");
+                        }
                     }
+                // final questions: ask the user to self-identify their party 
+                System.out.println("\nFinal Question: which political party do you identify with?");
+                System.out.println("1. Repulican");
+                System.out.println("2. Democrat");
+                System.out.println("3. Green Party");
+                System.out.println("4. Libertarian");
+                System.out.println("Enter the number corresponding to your party: ");
+
+                int partyChoice = scanner.nextInt(); 
+                String actualParty = getPartyName(partyChoice); 
+
                 scanner.close(); // close scanner 
-                saveResults(userResponses.toString()); // save responses to a file 
+
+                saveResults(userResponses.toString(), actualParty); // save responses to a file 
                 displayResults(); // display the final results 
             };
 
             // method to update political scores 
             private void processAnswer(String answer){
-                switch (answer) {
-                    case "A": republican++; break; 
-                    case "B": democrat++; break; 
-                    case "C": greenParty++; break; 
-                    case "D": libertarian++; break; 
-                }
+                double[] weights = answerWeights.get(answer); 
+                    republican += weights[0]; 
+                    democrat += weights[1]; 
+                    greenParty += weights[2]; 
+                    libertarian += weights[3]; 
             }
 
-            // save reponses to a file based on dominant political alignment
-            private void saveResults(String responses){
-                String party = getDominantParty();
-                String fileName = party + "_reponses.txt";
-
-                try(FileWriter writer = new FileWriter(fileName, true)){
-                    writer.write(responses + "\n" );
-                    System.out.println("\nYour reponses have been saved in: " + fileName);
-                }catch (IOException e){
-                    System.out.println("Error writing to file: " + e.getMessage());
+            private String predictParty(){
+                double maxScore = Math.max(Math.max(democrat, libertarian), Math.max(greenParty, libertarian));
+                // predicting only one party has a strong lead at least by 2 points 
+                if(maxScore - getSecondHighestScore() >= 2){
+                    return getDominantParty();
                 }
+                return null; 
+            }
+
+            private double getSecondHighestScore(){
+                double[] scores = {republican, greenParty, libertarian, democrat}; 
+                Arrays.sort(scores); 
+                return scores[2]; // second highest score 
             }
 
             // determine highest political score
             private String getDominantParty(){
-                int max = Math.max(Math.max(democrat, libertarian), Math.max(greenParty, libertarian));
+                double max = Math.max(Math.max(democrat, libertarian), Math.max(greenParty, libertarian));
                 if (max == democrat) return "Democrat";
                 if (max == democrat) return "Republican";
                 if (max == democrat) return "Green Party";
                 return "Libertarian";
+            }
+            
+            private String getPartyName(int choice){
+                switch(choice){
+                    case 1: return "Republican"; 
+                    case 2: return "Democrat"; 
+                    case 3: return "Green Party"; 
+                    case 4: return "Libertarian"; 
+                    default: return "unknown"; 
+                }
+            }
+
+            // save reponses to a file based on dominant political alignment
+            private void saveResults(String responses, String actualParty){
+                String fileName = "political_data.csv"; 
+                boolean fileExists = new File(fileName).exists(); 
+
+                try(FileWriter writer = new FileWriter(fileName, true)){
+                    if (!fileExists){
+                        writer.write("Republican, Democrat, Greenparty, Libertarian, ActualParty\n");
+                    }
+                    writer.write(String.format("%.2f,%.2f,%.2f,%.2f,%s\n", 
+                        (double)republican,(double) democrat,(double) greenParty, (double)libertarian, actualParty));
+
+                    System.out.println("\nYour responses have been saved in: " + fileName);
+                }catch (IOException e){
+                    System.out.println("Error writing to file: " + e.getMessage());
+                }
             }
 
             // Method to display final results 
