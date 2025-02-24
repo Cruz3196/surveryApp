@@ -76,7 +76,7 @@ public class SurveyApp {
                     }
                 // final questions: ask the user to self-identify their party 
                 System.out.println("\nFinal Question: which political party do you identify with?");
-                System.out.println("1. Repulican");
+                System.out.println("1. Republican");
                 System.out.println("2. Democrat");
                 System.out.println("3. Green Party");
                 System.out.println("4. Libertarian");
@@ -101,7 +101,7 @@ public class SurveyApp {
             }
 
             private String predictParty(){
-                double maxScore = Math.max(Math.max(democrat, libertarian), Math.max(greenParty, libertarian));
+                double maxScore = Math.max(Math.max(democrat, libertarian), Math.max(greenParty, republican));
                 // predicting only one party has a strong lead at least by 2 points 
                 if(maxScore - getSecondHighestScore() >= 2){
                     return getDominantParty();
@@ -117,10 +117,10 @@ public class SurveyApp {
 
             // determine highest political score
             private String getDominantParty(){
-                double max = Math.max(Math.max(democrat, libertarian), Math.max(greenParty, libertarian));
+                double max = Math.max(Math.max(democrat, libertarian), Math.max(greenParty, republican));
                 if (max == democrat) return "Democrat";
-                if (max == democrat) return "Republican";
-                if (max == democrat) return "Green Party";
+                if (max == republican) return "Republican";
+                if (max == greenParty) return "Green Party";
                 return "Libertarian";
             }
             
@@ -155,18 +155,16 @@ public class SurveyApp {
             // Method to display final results 
             private void displayResults(){
                 System.out.println("\nSurvey Results:");
-                System.out.println("Repulican Score: " + republican);
+                System.out.println("Republican Score: " + republican);
                 System.out.println("Democrat Score: " + democrat);
                 System.out.println("Green Party Score: " + greenParty);
                 System.out.println("Libertarian Party: " + libertarian);
                 System.out.println("Your political alignment is: " + getDominantParty());
             }
-
-
-        // Main method to run the program
+        }
+    // Main method to run the program
         public static void main(String[] args) {
             Survey mySurvey = new Survey();
             mySurvey.askQuestions();
-        }
     }
 }
