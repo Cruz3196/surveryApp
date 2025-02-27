@@ -1,0 +1,9 @@
+q1,q2,q3,q4,q5,q6,q7,q8,political_party
+A,A,A,A,A,A,A,D,Independent
+B,C,D,A,B,B,B,B,Republican
+C,D,A,B,C,C,C,C,Independent
+D,A,B,C,D,D,D,D,Libertarian
+A,B,A,C,D,A,B,C,Democrat
+B,A,D,B,C,D,A,B,Republican
+C,C,B,A,B,C,D,A,Independent
+D,D,C,D,A,B,C,D,Libertarian

@@ -1,0 +1,21 @@
+@relation political_survey
+
+@attribute q1 {A, B, C, D}
+@attribute q2 {A, B, C, D}
+@attribute q3 {A, B, C, D}
+@attribute q4 {A, B, C, D}
+@attribute q5 {A, B, C, D}
+@attribute q6 {A, B, C, D}
+@attribute q7 {A, B, C, D}
+@attribute q8 {A, B, C, D}
+@attribute political_party {Democrat, Republican, Independent, Libertarian}
+
+@data
+A,B,C,D,A,A,A,A,Democrat
+B,C,D,A,B,B,B,B,Republican
+C,D,A,B,C,C,C,C,Independent
+D,A,B,C,D,D,D,D,Libertarian
+A,B,A,C,D,A,B,C,Democrat
+B,A,D,B,C,D,A,B,Republican
+C,C,B,A,B,C,D,A,Independent
+D,D,C,D,A,B,C,D,Libertarian
